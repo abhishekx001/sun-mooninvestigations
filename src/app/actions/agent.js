@@ -38,6 +38,12 @@ export async function respondToAssignment(caseId, status) {
         status: 'unassigned'
       })
       .eq('id', caseId)
+      
+    await supabase.from('notifications').insert({
+      case_id: caseId,
+      agent_id: user.id,
+      message: 'Agent rejected the case assignment.'
+    })
   } else if (status === 'accepted') {
     await supabase
       .from('cases')
@@ -45,6 +51,12 @@ export async function respondToAssignment(caseId, status) {
         status: 'in_progress'
       })
       .eq('id', caseId)
+      
+    await supabase.from('notifications').insert({
+      case_id: caseId,
+      agent_id: user.id,
+      message: 'Agent accepted the case assignment.'
+    })
   }
 
   revalidatePath('/agent/dashboard')
@@ -110,6 +122,13 @@ export async function submitReport(formData) {
       .update({ date_of_final_submission: now })
       .eq('case_id', caseId)
   }
+
+  // Insert notification for admin
+  await supabase.from('notifications').insert({
+    case_id: caseId,
+    agent_id: user.id,
+    message: isFinal ? 'Agent submitted the final report for the case.' : 'Agent submitted a new update for the case.'
+  })
 
   revalidatePath(`/agent/cases/${caseId}`)
   return { success: true }

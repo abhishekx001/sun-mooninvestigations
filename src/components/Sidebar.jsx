@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, FileText, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, FileText, LogOut, Bell } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
-export default function Sidebar({ role, fullName, location }) {
+export default function Sidebar({ role, fullName, location, unreadCount = 0 }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -15,6 +15,7 @@ export default function Sidebar({ role, fullName, location }) {
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/cases', label: 'Cases', icon: FileText },
     { href: '/admin/agents', label: 'Agents', icon: Users },
+    { href: '/admin/notifications', label: 'Notifications', icon: Bell, badge: unreadCount },
   ]
 
   const agentLinks = [
@@ -48,14 +49,21 @@ export default function Sidebar({ role, fullName, location }) {
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
+              className={`flex items-center justify-between px-3 py-2 text-sm transition-colors ${
                 isActive
                   ? 'bg-gray-100 text-accent font-medium border-l-2 border-accent'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-2 border-transparent'
               }`}
             >
-              <Icon className="w-4 h-4" />
-              {link.label}
+              <div className="flex items-center gap-3">
+                <Icon className="w-4 h-4" />
+                {link.label}
+              </div>
+              {link.badge !== undefined && link.badge > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  {link.badge}
+                </span>
+              )}
             </Link>
           )
         })}

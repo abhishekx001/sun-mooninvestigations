@@ -217,3 +217,20 @@ export async function updateCase(caseId, formData) {
   revalidatePath('/admin/cases')
   return { success: true }
 }
+
+export async function markAsRead(notificationId) {
+  const supabase = await getAdminClient()
+  
+  const { error } = await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', notificationId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/admin/notifications')
+  revalidatePath('/admin/dashboard') // layout fetches count
+  return { success: true }
+}
