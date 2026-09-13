@@ -21,6 +21,7 @@ export default function MobileNav({ role, fullName, location, unreadCount = 0 })
 
   const agentLinks = [
     { href: '/agent/dashboard', label: 'My Cases', icon: LayoutDashboard },
+    { href: '/agent/dashboard', label: 'Alerts', icon: Bell, badge: unreadCount },
   ]
 
   const links = role === 'admin' ? adminLinks : agentLinks
