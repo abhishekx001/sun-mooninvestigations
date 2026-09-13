@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { Users, FileText, AlertTriangle } from 'lucide-react'
+import { formatIST } from '@/utils/dateFormatter'
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -66,7 +67,7 @@ export default async function AdminDashboardPage() {
                 <li key={c.id} className="py-4 flex items-center justify-between">
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-gray-900">{c.case_name}</span>
-                    <span className="text-xs text-gray-500">Due: {new Date(c.tat_target).toLocaleString()}</span>
+                    <span className="text-xs text-gray-500">Due: {formatIST(c.tat_target)}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="px-2 py-1 text-[10px] font-medium tracking-wider uppercase bg-gray-100 text-gray-600 border border-gray-200">

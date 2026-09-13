@@ -4,6 +4,7 @@ import StatusTag from '@/components/StatusTag'
 import DeadlineCountdown from '@/components/DeadlineCountdown'
 import ReportFormClient from './ReportFormClient'
 import CommitDateForm from './CommitDateForm'
+import { formatIST } from '@/utils/dateFormatter'
 
 export default async function AgentCaseDetailPage({ params }) {
   const { id } = await params
@@ -76,8 +77,8 @@ export default async function AgentCaseDetailPage({ params }) {
                 {caseItem.reports.map((report) => (
                   <div key={report.id} className="border-l-2 border-gray-200 pl-4 py-2">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {new Date(report.submitted_at).toLocaleString()}
+                      <span className="text-xs text-gray-400 mt-1 block">
+                        {formatIST(report.submitted_at)}
                       </span>
                       {report.is_final && (
                         <span className="px-2 py-1 text-[10px] font-medium tracking-wider uppercase bg-accent text-white">
@@ -107,7 +108,7 @@ export default async function AgentCaseDetailPage({ params }) {
                 <dt className="text-xs text-gray-500 uppercase tracking-wider mb-2">TAT Target (Deadline)</dt>
                 <dd className="text-sm flex items-center">
                   <span className="mr-2 text-sm text-gray-900">
-                    {caseItem.tat_target || caseItem.deadline ? new Date(caseItem.tat_target || caseItem.deadline).toLocaleDateString() : 'None set'}
+                    {caseItem.tat_target || caseItem.deadline ? formatIST(caseItem.tat_target || caseItem.deadline) : 'None set'}
                   </span>
                   <DeadlineCountdown deadline={caseItem.tat_target || caseItem.deadline} />
                 </dd>

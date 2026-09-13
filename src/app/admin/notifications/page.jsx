@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { markAsRead } from '@/app/actions/admin'
 import { CheckCircle, Bell } from 'lucide-react'
 import Link from 'next/link'
+import { formatIST } from '@/utils/dateFormatter'
 
 export default async function AdminNotificationsPage() {
   const supabase = await createClient()
@@ -49,7 +50,7 @@ export default async function AdminNotificationsPage() {
                     )}
                     
                     <p className="mt-2 text-xs text-gray-400">
-                      {new Date(notif.created_at).toLocaleString()}
+                      {formatIST(notif.created_at)}
                     </p>
                   </div>
 

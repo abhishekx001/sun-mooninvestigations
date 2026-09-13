@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createCase } from '@/app/actions/admin'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
@@ -17,8 +17,20 @@ export default function CreateCaseModal({ preAssignedAgentId }) {
   const [error, setError] = useState(null)
   const [isPending, setIsPending] = useState(false)
   const [uploadProgress, setUploadProgress] = useState('')
+  const [agents, setAgents] = useState([])
+  const [selectedLocation, setSelectedLocation] = useState('')
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    if (isOpen && agents.length === 0) {
+      supabase
+        .from('profiles')
+        .select('id, full_name, location')
+        .eq('role', 'agent')
+        .then(({ data }) => setAgents(data || []))
+    }
+  }, [isOpen, supabase, agents.length])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -34,6 +46,7 @@ export default function CreateCaseModal({ preAssignedAgentId }) {
       setError(result.error)
     } else {
       setIsOpen(false)
+      setSelectedLocation('')
       if (result.caseId) {
         router.push(`/admin/cases/${result.caseId}`)
       }
@@ -83,22 +96,53 @@ export default function CreateCaseModal({ preAssignedAgentId }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                  <select required name="location" className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none bg-white">
+                  <select 
+                    required 
+                    name="location" 
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                    className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none bg-white"
+                  >
                     <option value="">Select Location...</option>
                     {LOCATIONS.sort().map(loc => (
                       <option key={loc} value={loc}>{loc}</option>
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Investigation Type</label>
-                  <input type="text" name="investigation_type" className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none" />
-                </div>
+                
+                {!preAssignedAgentId ? (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Assign Agent (Optional)</label>
+                    <select 
+                      name="assigned_agent_id" 
+                      disabled={!selectedLocation}
+                      className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none bg-white disabled:bg-gray-50 disabled:text-gray-400"
+                    >
+                      <option value="">{selectedLocation ? 'Select an agent...' : 'Select a location first'}</option>
+                      {agents.filter(a => a.location === selectedLocation).map(agent => (
+                        <option key={agent.id} value={agent.id}>{agent.full_name}</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Investigation Type</label>
+                    <input type="text" name="investigation_type" className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none" />
+                  </div>
+                )}
+
+                {!preAssignedAgentId && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Investigation Type</label>
+                    <input type="text" name="investigation_type" className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none" />
+                  </div>
+                )}
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">FIR No. / Police Station</label>
                   <input type="text" name="fir_no_police_station" className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none" />
                 </div>
-                <div>
+                <div className={preAssignedAgentId ? "col-span-1" : "col-span-2"}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">TAT Target (Optional Deadline)</label>
                   <input type="datetime-local" name="tat_target" className="w-full border border-gray-300 p-2 text-sm focus:border-accent focus:outline-none" />
                 </div>
@@ -125,7 +169,7 @@ export default function CreateCaseModal({ preAssignedAgentId }) {
                 <div className="flex gap-3">
                   <button 
                     type="button" 
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => { setIsOpen(false); setSelectedLocation(''); }}
                     className="px-4 py-2 border border-gray-300 text-gray-700 text-sm hover:bg-gray-50 transition-colors"
                   >
                     Cancel
