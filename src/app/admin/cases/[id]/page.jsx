@@ -4,6 +4,7 @@ import StatusTag from '@/components/StatusTag'
 import DeadlineCountdown from '@/components/DeadlineCountdown'
 import LocationAgentAssign from '@/components/forms/LocationAgentAssign'
 import EditCaseForm from '@/components/forms/EditCaseForm'
+import DeleteCaseButton from '@/components/forms/DeleteCaseButton'
 import { formatIST } from '@/utils/dateFormatter'
 
 export default async function AdminCaseDetailPage({ params }) {
@@ -153,6 +154,16 @@ export default async function AdminCaseDetailPage({ params }) {
               currentAgentId={caseItem.assigned_agent_id} 
               currentTatTarget={caseItem.tat_target || caseItem.deadline}
             />
+          </div>
+          
+          <div className="bg-white border border-red-200 p-6 border-l-4 border-l-red-600">
+            <h3 className="text-sm font-medium text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-2">
+              Danger Zone
+            </h3>
+            <p className="text-xs text-gray-500 mb-4">
+              Permanently delete this case and all of its associated reports and documents. This cannot be undone.
+            </p>
+            <DeleteCaseButton caseId={caseItem.id} />
           </div>
         </div>
       </div>

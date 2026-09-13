@@ -18,8 +18,40 @@ export default async function AgentDashboardPage() {
   const activeCases = allCases?.filter(c => ['assigned', 'in_progress'].includes(c.status)) || []
   const completedCases = allCases?.filter(c => ['submitted', 'closed'].includes(c.status)) || []
 
+  const now = new Date()
+  const fortyEightHoursFromNow = new Date(now.getTime() + 48 * 60 * 60 * 1000)
+
+  let overdueCases = 0
+  let approachingCases = 0
+
+  activeCases.forEach(c => {
+    if (c.tat_target || c.deadline) {
+      const deadline = new Date(c.tat_target || c.deadline)
+      if (deadline < now) overdueCases++
+      else if (deadline <= fortyEightHoursFromNow) approachingCases++
+    }
+  })
+
   return (
     <div className="space-y-12">
+      {/* Deadline Reminders Banner */}
+      {(overdueCases > 0 || approachingCases > 0) && (
+        <div className={`p-4 border-l-4 ${overdueCases > 0 ? 'bg-red-50 border-l-red-600 text-red-800' : 'bg-amber-50 border-l-amber-500 text-amber-800'}`}>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <h3 className="font-medium">
+                {overdueCases > 0 ? 'Urgent: Overdue Deadlines!' : 'Approaching Deadlines'}
+              </h3>
+              <p className="text-sm mt-1">
+                {overdueCases > 0 && <span>You have <strong>{overdueCases}</strong> case(s) past their TAT target. </span>}
+                {approachingCases > 0 && <span>You have <strong>{approachingCases}</strong> case(s) due within the next 48 hours. </span>}
+                Please review your active cases below and submit updates immediately.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Active Cases Section */}
       <div className="space-y-6">
         <div>

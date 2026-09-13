@@ -234,3 +234,20 @@ export async function markAsRead(notificationId) {
   revalidatePath('/admin/dashboard') // layout fetches count
   return { success: true }
 }
+
+export async function deleteCase(caseId) {
+  const supabase = await getAdminClient()
+  
+  const { error } = await supabase
+    .from('cases')
+    .delete()
+    .eq('id', caseId)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/admin/cases')
+  revalidatePath('/admin/dashboard')
+  return { success: true }
+}
