@@ -20,7 +20,7 @@ export default async function AdminCasesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-light text-gray-900 tracking-tight">Cases</h2>
           <p className="mt-1 text-sm text-gray-500">All investigation cases.</p>

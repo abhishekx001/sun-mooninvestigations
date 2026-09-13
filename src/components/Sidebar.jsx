@@ -29,7 +29,7 @@ export default function Sidebar({ role, fullName, location }) {
   }
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-[#FAFAFA] flex flex-col h-full">
+    <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-[#FAFAFA] hidden md:flex flex-col h-full">
       <div className="p-6 border-b border-gray-200">
         <img src="/logo-img.jpeg" alt="Sun Moon Investigators Pvt Ltd" className="h-10 w-auto mb-2" />
         <h1 className="text-xs tracking-widest font-medium uppercase text-gray-900 mb-1 leading-snug">

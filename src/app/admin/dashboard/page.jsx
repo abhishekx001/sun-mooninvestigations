@@ -39,7 +39,7 @@ export default async function AdminDashboardPage() {
         <p className="mt-1 text-sm text-gray-500">Overview of investigation cases and agent activity.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {stats.map((stat) => (
           <div key={stat.label} className="bg-white border border-gray-200 p-6 flex items-center">
             <div className="flex-shrink-0 bg-gray-50 p-3 border border-gray-100">

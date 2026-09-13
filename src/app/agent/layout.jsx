@@ -1,4 +1,5 @@
 import Sidebar from '@/components/Sidebar'
+import MobileNav from '@/components/MobileNav'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -23,11 +24,14 @@ export default async function AgentLayout({ children }) {
   return (
     <div className="flex h-screen bg-[#FAFAFA] overflow-hidden">
       <Sidebar role={profile.role} fullName={profile.full_name} location={profile.location} />
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-4 sm:p-8 max-w-5xl mx-auto">
-          {children}
-        </div>
-      </main>
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <MobileNav role={profile.role} fullName={profile.full_name} location={profile.location} />
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-4 md:p-8 max-w-5xl mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
